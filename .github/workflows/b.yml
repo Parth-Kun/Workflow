@@ -27,7 +27,7 @@ jobs:
        - name: cloning repo
          continue-on-error: true
          run: |
-           git clone -b myencode_new https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com/luffyisencoding/GithubC.git 
+           git clone -b main https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com/luffyisencoding/GithubC.git 
        - name: Running Encoder Bot
          timeout-minutes: 300
          continue-on-error: true
