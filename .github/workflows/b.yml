@@ -1,0 +1,46 @@
+name: setting up environment
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: 'README.md'
+  workflow_dispatch:
+    
+env:
+  GitHubMail: "mugiwara.no.yohoho@gmail.com"
+  GitHubName: "luffyisencoding" 
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@main
+
+       - name: Set Git Configs & Secrets
+         run: |
+           git config --global user.email ${GitHubMail}
+           git config --global user.name ${GitHubName}
+           git config --global credential.helper store
+           echo "https://${GitHubName}:${{ secrets.GH_TOKEN2 }}@github.com" > ~/.git-credentials
+
+       - name: cloning repo
+         continue-on-error: true
+         run: |
+           git clone -b myencode_new https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com/luffyisencoding/GithubC.git 
+       - name: Running Encoder Bot
+         timeout-minutes: 300
+         continue-on-error: true
+         run: |
+           cd GithubC
+           docker build -t userbot . && docker run userbot
+           
+       - name: Loop workflow
+         continue-on-error: true
+         run: |
+           git clone https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} loop
+           cd loop || exit 1
+           echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
+           git add looper.txt
+           git commit -m "Workflow : Loop at $(date -u +%D-%T%P)"
+           git push -q https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} HEAD:main
